@@ -1,0 +1,17 @@
+services:
+  keycloak:
+    image: keycloak/keycloak:26.8
+    container_name: keycloak-example-keycloak
+    # start-dev — режим разработки без боевого TLS.
+    # --import-realm — импортировать realm из /opt/keycloak/data/import при старте.
+    command: start-dev --import-realm
+    environment:
+      # Учётная запись администратора консоли (только для dev!).
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    volumes:
+      - ./keycloak/realm-import.json:/opt/keycloak/data/import/demo.json:ro

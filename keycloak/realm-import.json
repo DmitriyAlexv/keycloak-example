@@ -1,0 +1,70 @@
+{
+  "realm": "demo",
+  "enabled": true,
+  "displayName": "KeyCloakExample Demo",
+  "registrationAllowed": true,
+  "loginTheme": "keycloak",
+  "clients": [
+    {
+      "clientId": "keycloak-example-web",
+      "name": "KeyCloakExample.Web",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "change-me-in-production",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5165/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5165"
+      ],
+      "protocolMappers": [
+        {
+          "name": "realm roles to roles claim",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "demo-user",
+        "description": "Realm-роль для демонстрации авторизации по ролям"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "email": "alice@example.com",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-demo",
+        "demo-user"
+      ]
+    }
+  ]
+}

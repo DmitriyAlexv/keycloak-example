@@ -1,0 +1,11 @@
+@page "/admin"
+@model KeyCloakExample.Web.Pages.AdminModel
+@{
+    Layout = "_Layout";
+}
+
+<p>
+    Доступ разрешён: у пользователя <strong>@Model.UserName</strong>
+    есть realm-роль <code>demo-user</code>.
+</p>
+<p><a asp-page="/Index">На главную</a> · <a asp-page="/Logout">Выйти</a></p>

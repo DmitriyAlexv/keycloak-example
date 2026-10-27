@@ -1,0 +1,23 @@
+@page "/secure"
+@model KeyCloakExample.Web.Pages.SecureModel
+@{
+    Layout = "_Layout";
+}
+
+<p>Это защищённая страница — она доступна только после входа через Keycloak.</p>
+
+<h2>Клеймы пользователя</h2>
+<table>
+    <thead><tr><th>Type</th><th>Value</th></tr></thead>
+    <tbody>
+    @foreach (var claim in User.Claims)
+    {
+        <tr><td><code>@claim.Type</code></td><td>@claim.Value</td></tr>
+    }
+    </tbody>
+</table>
+
+<h2>Access token</h2>
+<p class="token">@(Model.AccessToken ?? "(не сохранён — проверьте SaveTokens = true)")</p>
+
+<p><a asp-page="/Index">На главную</a> · <a asp-page="/Logout">Выйти</a></p>

@@ -1,0 +1,23 @@
+@page
+@model KeyCloakExample.Web.Pages.IndexModel
+@{
+    Layout = "_Layout";
+}
+
+@if (Model.IsAuthenticated)
+{
+    <p>Вы вошли как <strong>@Model.UserName</strong>.</p>
+    <nav>
+        <a asp-page="/Secure">/Secure</a> — защищённая страница (нужна аутентификация)<br/>
+        <a asp-page="/Admin">/Admin</a> — страница только для роли <code>demo-user</code><br/>
+        <a asp-page="/Logout">Выйти</a> (logout из приложения и Keycloak)
+    </nav>
+}
+else
+{
+    <p>Вы не аутентифицированы.</p>
+    <nav>
+        <a asp-page="/Secure">Войти через Keycloak</a> — при переходе на защищённый ресурс
+        ASP.NET Core сделает challenge и редирекнет на страницу логина Keycloak.
+    </nav>
+}
