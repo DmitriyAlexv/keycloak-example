@@ -1,23 +1,14 @@
 # KeyCloakExample
 
-Минимальное ASP.NET Core приложение для демонстрации аутентификации и авторизации через [Keycloak](https://www.keycloak.org/) по протоколу OpenID Connect (Authorization Code Flow + PKCE).
+- ASP.NET 10
+- KeyCloak 26.8
+- OIDC
 
-## Структура
+## Main Endpoints
 
-```
-KeyCloakExample.sln
-├── src/KeyCloakExample.Web/     # ASP.NET Core приложение (OIDC-клиент)
-├── keycloak/realm-import.json   # Realm "demo": клиент, роль, пользователь
-└── docker-compose.yml           # Keycloak в режиме start-dev с импортом realm
-```
-
-## Как это работает
-
-- Приложение построено на Razor Pages (страницы в `src/KeyCloakExample.Web/Pages`) и использует `Microsoft.AspNetCore.Authentication.OpenIdConnect`.
-- Схемы: `Cookies` (сессия приложения) + `OpenIdConnect` (challenge/logout в Keycloak).
-- В Keycloak встроенный клиентский scope `roles` переопределён ([`keycloak/realm-import.json`](keycloak/realm-import.json)): мапперы `realm roles` и `client roles` кладут роли в multivalued-клейм `roles` (массив строк) в ID- и access-токенах.
-- В приложении `TokenValidationParameters.RoleClaimType = "roles"`, поэтому `[Authorize(Roles = "demo-user")]` работает «из коробки» (в примере — страница `/admin`), без ручного разбора `realm_access`.
-- Access token сохраняется (`SaveTokens = true`) и выводится на странице `/secure`.
+- http://localhost:5165/ - UI приложения
+- http://localhost:8080/admin/master/console/ - UI настройки keycloak
+- http://localhost:8080/realms/demo/account/ - UI профиля области demo keycloak
 
 ## Quick Start
 
@@ -27,18 +18,9 @@ KeyCloakExample.sln
 docker compose up -d
 ```
 
-Keycloak поднимется на <http://localhost:8080>. При старте автоматически импортируется realm `demo` из [`keycloak/realm-import.json`](keycloak/realm-import.json):
+При старте автоматически импортируется realm `demo` из [`keycloak/realm-import.json`](keycloak/realm-import.json)
 
-| Сущность | Значение |
-|---|---|
-| Realm | `demo` |
-| Консоль администратора | <http://localhost:8080/admin> — `admin` / `admin` |
-| OIDC-клиент | `keycloak-example-web` (secret: `change-me-in-production`) |
-| Redirect URI | `http://localhost:5165/*` |
-| Realm-роль | `demo-user` |
-| Демо-пользователь | `alice` / `password` (с ролью `demo-user`) |
-
-Подождите ~10–30 секунд, пока Keycloak выполнит импорт realm (следите за строкой `Imported realm "demo"` в логах: `docker compose logs keycloak`).
+Подождите ~10–30 секунд, пока Keycloak выполнит импорт realm.
 
 ### 2. Запустить приложение
 
@@ -46,7 +28,7 @@ Keycloak поднимется на <http://localhost:8080>. При старте 
 dotnet run --project src/KeyCloakExample.Web --launch-profile http
 ```
 
-Приложение поднимется на <http://localhost:5165>.
+Конфигурация в [`src/KeyCloakExample.Web/appsettings.json`](src/KeyCloakExample.Web/appsettings.json)
 
 ### 3. Проверить
 
@@ -55,14 +37,3 @@ dotnet run --project src/KeyCloakExample.Web --launch-profile http
 3. После входа вы вернётесь в приложение и увидите свои клеймы и access token на странице `/secure`.
 4. Откройте `/admin` — страница доступна только пользователям с realm-ролью `demo-user` (у `alice` она есть).
 5. `/logout` завершает сессию и в приложении, и в Keycloak.
-
-## Конфигурация
-
-Настройки Keycloak находятся в [`src/KeyCloakExample.Web/appsettings.json`](src/KeyCloakExample.Web/appsettings.json) и могут быть переопределены переменными окружения:
-
-| Ключ | Переменная окружения | Значение по умолчанию |
-|---|---|---|
-| `Keycloak:Authority` | `Keycloak__Authority` | `http://localhost:8080/realms/demo` |
-| `Keycloak:ClientId` | `Keycloak__ClientId` | `keycloak-example-web` |
-| `Keycloak:ClientSecret` | `Keycloak__ClientSecret` | `change-me-in-production` |
-| `Keycloak:RequireHttpsMetadata` | `Keycloak__RequireHttpsMetadata` | `false` (для dev по http) |
